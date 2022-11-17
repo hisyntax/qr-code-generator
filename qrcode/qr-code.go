@@ -22,7 +22,6 @@ type QrCode struct {
 
 func GenerateQRCode(payload QrCode) (string, error) {
 	api_key := os.Getenv("API_KEY")
-	fmt.Printf("This is the api key: %v", api_key)
 	url := fmt.Sprintf("https://api.qr-code-generator.com/v1/create?access-token=%s", api_key)
 	method := "POST"
 
@@ -56,7 +55,6 @@ func GenerateQRCode(payload QrCode) (string, error) {
 		return "", err
 	}
 
-	fmt.Println("This is cloudinary error outside")
 	return imgUrl, err
 }
 
