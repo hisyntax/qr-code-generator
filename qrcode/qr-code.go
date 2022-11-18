@@ -3,12 +3,15 @@ package qrcode
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"image"
 	"image/png"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"os"
+	"strings"
 
 	"github.com/hisyntax/qr-code-generator/uploader"
 )
@@ -22,15 +25,26 @@ type QrCode struct {
 
 func GenerateQRCode(payload QrCode) (string, error) {
 	api_key := os.Getenv("API_KEY")
-	url := fmt.Sprintf("https://api.qr-code-generator.com/v1/create?access-token=%s", api_key)
+	requestUrl := fmt.Sprintf("https://api.qr-code-generator.com/v1/create?access-token=%s", api_key)
 	method := "POST"
 
-	res, _, err := NewRequest(method, url, payload)
+	//if the text passed contains a dot(.), it is assumed to be a link
+	if strings.Contains(payload.QRCodeText, ".") {
+		//validate the url
+		_, err := url.ParseRequestURI(payload.QRCodeText)
+		if err != nil {
+			return "", errors.New("invalid url")
+		}
+	}
+
+	//generate qrcode
+	res, _, err := NewRequest(method, requestUrl, payload)
 	if err != nil {
 		fmt.Printf("This is tthe server err: %v\n", err)
 		return "", err
 	}
 
+	//write image byte to disk
 	img, _, err := image.Decode(bytes.NewReader(res))
 	if err != nil {
 		return "", err
@@ -47,13 +61,26 @@ func GenerateQRCode(payload QrCode) (string, error) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	fmt.Printf("This is the image: %v\n", img)
 
-	imgUrl, err := uploader.FileUploader(img)
+	f, err := os.Open("./QRImg.png")
+	if err != nil {
+		return "", err
+	}
+
+	fmt.Printf("This is the file opened: %v\n", f)
+	// files, err := f.Readdir(0)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	return
+	// }
+
+	imgUrl, err := uploader.FileUploader(f)
 	if err != nil {
 		fmt.Printf("This is tthe cloudinary err: %v\n", err)
 		return "", err
 	}
+
+	//upload the image to cloudinary
 
 	return imgUrl, err
 }

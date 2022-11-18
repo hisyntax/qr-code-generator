@@ -42,7 +42,7 @@ func GenerateQrCode(c *gin.Context) {
 	res, err := qrcode.GenerateQRCode(qr)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "error generating qr code",
+			"error": err.Error(),
 		})
 		return
 	}
