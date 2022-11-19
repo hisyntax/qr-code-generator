@@ -2,11 +2,10 @@ package qrcode
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"image"
-	"image/png"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -21,6 +20,10 @@ type QrCode struct {
 	QRCodeText  string `json:"qr_code_text"`
 	ImageFormat string `json:"image_format"`
 	QRCodeLogo  string `json:"qr_code_logo"`
+}
+
+func toBase64(b []byte) string {
+	return base64.StdEncoding.EncodeToString(b)
 }
 
 func GenerateQRCode(payload QrCode) (string, error) {
@@ -38,49 +41,35 @@ func GenerateQRCode(payload QrCode) (string, error) {
 	}
 
 	//generate qrcode
-	res, _, err := NewRequest(method, requestUrl, payload)
+	resImg, _, err := NewRequest(method, requestUrl, payload)
 	if err != nil {
 		fmt.Printf("This is tthe server err: %v\n", err)
 		return "", err
 	}
 
-	//write image byte to disk
-	img, _, err := image.Decode(bytes.NewReader(res))
-	if err != nil {
-		return "", err
-	}
-	out, err := os.Create("./QRImg.png")
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	var base64Encoding string
+	mimeType := http.DetectContentType(resImg)
+	fmt.Printf("This is the mimeType: %v\n", mimeType)
 
-	err = png.Encode(out, img)
-
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+	switch mimeType {
+	case "image/jpeg":
+		base64Encoding += "data:image/jpeg;base64,"
+	case "image/png":
+		base64Encoding += "data:image/png;base64,"
+	case "text/plain":
+		base64Encoding += "data:text/plain;base64,"
+	case "application/pdf":
+		base64Encoding += "data:application/pdf;base64,"
 	}
 
-	f, err := os.Open("./QRImg.png")
-	if err != nil {
-		return "", err
-	}
+	base64Encoding += toBase64(resImg)
+	// fmt.Println(base64Encoding)
 
-	fmt.Printf("This is the file opened: %v\n", f)
-	// files, err := f.Readdir(0)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	return
-	// }
-
-	imgUrl, err := uploader.FileUploader(f)
+	imgUrl, err := uploader.FileUploader(base64Encoding)
 	if err != nil {
 		fmt.Printf("This is tthe cloudinary err: %v\n", err)
 		return "", err
 	}
-
-	//upload the image to cloudinary
 
 	return imgUrl, err
 }
