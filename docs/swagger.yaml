@@ -1,0 +1,53 @@
+basePath: /
+definitions:
+  qrcode.QrCode:
+    properties:
+      frame_name:
+        type: string
+      image_format:
+        type: string
+      qr_code_logo:
+        type: string
+      qr_code_text:
+        type: string
+    type: object
+host: customqr.herokuapp.com
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is the API docs for testing
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: qrcode generator API
+  version: "1.0"
+paths:
+  /generate-qrcode:
+    post:
+      consumes:
+      - application/json
+      description: use this endpoint to generate a qr code
+      parameters:
+      - description: qrcode
+        in: body
+        name: qrcode
+        required: true
+        schema:
+          $ref: '#/definitions/qrcode.QrCode'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: generate qrcode
+      tags:
+      - qr-code
+schemes:
+- https
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"

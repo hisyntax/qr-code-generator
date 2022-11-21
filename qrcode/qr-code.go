@@ -32,7 +32,7 @@ func GenerateQRCode(payload QrCode) (string, error) {
 	method := "POST"
 
 	//validate url
-	texttype, err := urlReq.ValidateURL(payload.QRCodeText)
+	_, texttype, err := urlReq.ValidateURL(payload.QRCodeText)
 	if err != nil {
 		return "", err
 	}

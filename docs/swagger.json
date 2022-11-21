@@ -1,0 +1,80 @@
+{
+    "schemes": [
+        "https"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "This is the API docs for testing",
+        "title": "qrcode generator API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "url": "http://www.swagger.io/support",
+            "email": "support@swagger.io"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "customqr.herokuapp.com",
+    "basePath": "/",
+    "paths": {
+        "/generate-qrcode": {
+            "post": {
+                "description": "use this endpoint to generate a qr code",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "qr-code"
+                ],
+                "summary": "generate qrcode",
+                "parameters": [
+                    {
+                        "description": "qrcode",
+                        "name": "qrcode",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/qrcode.QrCode"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "qrcode.QrCode": {
+            "type": "object",
+            "properties": {
+                "frame_name": {
+                    "type": "string"
+                },
+                "image_format": {
+                    "type": "string"
+                },
+                "qr_code_logo": {
+                    "type": "string"
+                },
+                "qr_code_text": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BasicAuth": {
+            "type": "basic"
+        }
+    }
+}

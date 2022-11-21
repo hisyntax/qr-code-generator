@@ -5,11 +5,15 @@ import (
 	"net/http"
 	"os"
 
+	_ "github.com/hisyntax/qr-code-generator/docs"
 	"github.com/hisyntax/qr-code-generator/qrcode"
 
 	"github.com/gin-gonic/gin"
 	urlReq "github.com/hisyntax/domain/url"
 	"github.com/joho/godotenv"
+
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func init() {
@@ -20,6 +24,23 @@ func init() {
 	urlReq.Token = os.Getenv("TOKEN")
 }
 
+// @title           qrcode generator API
+// @version         1.0
+// @description     This is the API docs for testing
+// @termsOfService  http://swagger.io/terms/
+
+// @contact.name   API Support
+// @contact.url    http://www.swagger.io/support
+// @contact.email  support@swagger.io
+
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host                       customqr.herokuapp.com
+// @BasePath
+// @schemes                    https
+// @query.collection.format    multi
+// @securityDefinitions.basic  BasicAuth
 func main() {
 	r := gin.Default()
 
@@ -30,9 +51,19 @@ func main() {
 
 	r.POST("/generate-qrcode", GenerateQrCode)
 
+	r.GET("/api/v1/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.Run(":" + port)
 }
 
+// generate qrcode 	godoc
+// @Summary      generate qrcode
+// @Description  use this endpoint to generate a qr code
+// @Tags         qr-code
+// @Accept       json
+// @Produce      json
+// @param        qrcode  body  qrcode.QrCode  true  "qrcode"
+// @Success      200
+// @Router       /generate-qrcode [post]
 func GenerateQrCode(c *gin.Context) {
 	var qr qrcode.QrCode
 	if err := c.Bind(&qr); err != nil {
