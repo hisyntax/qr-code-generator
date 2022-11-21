@@ -32,7 +32,7 @@ func GenerateQRCode(payload QrCode) (string, error) {
 	method := "POST"
 
 	//validate url
-	_, texttype, err := urlReq.ValidateURL(payload.QRCodeText)
+	_, textType, err := urlReq.ValidateURL(payload.QRCodeText)
 	if err != nil {
 		return "", err
 	}
@@ -65,7 +65,7 @@ func GenerateQRCode(payload QrCode) (string, error) {
 	}
 
 	base64Encoding += toBase64(resImg)
-	fileName := fmt.Sprintf("%s_%s_%v", texttype, payload.QRCodeText, fileFormat) // type(url/text), data type(google/ https://google.com), extention(file format, - png, jpg)
+	fileName := fmt.Sprintf("%s_%s_%v", textType, payload.QRCodeText, fileFormat) // type(url/text), data type(google/ https://google.com), extention(file format, - png, jpg)
 
 	imgUrl, err := uploader.FileUploader(base64Encoding, fileName)
 	if err != nil {

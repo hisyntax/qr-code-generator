@@ -51,7 +51,7 @@ func main() {
 
 	r.POST("/generate-qrcode", GenerateQrCode)
 
-	r.GET("/api/v1/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.Run(":" + port)
 }
 
