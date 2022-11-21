@@ -57,7 +57,7 @@ func main() {
 
 // generate qrcode 	godoc
 // @Summary      generate qrcode
-// @Description  use this endpoint to generate a qr code
+// @Description  use this endpoint to generate a qr code . This is an example request payload "frame_name": "no-frame",  "qr_code_logo": "scan-me-square"(this is be optional),  "image_format": "PNG, PDF, JPG",  "qr_code_text": "https://google.com",
 // @Tags         qr-code
 // @Accept       json
 // @Produce      json

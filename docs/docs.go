@@ -27,7 +27,7 @@ const docTemplate = `{
     "paths": {
         "/generate-qrcode": {
             "post": {
-                "description": "use this endpoint to generate a qr code",
+                "description": "use this endpoint to generate a qr code . This is an example request payload \"frame_name\": \"no-frame\",  \"qr_code_logo\": \"scan-me-square\"(this is be optional),  \"image_format\": \"PNG, PDF, JPG\",  \"qr_code_text\": \"https://google.com\",",
                 "consumes": [
                     "application/json"
                 ],
@@ -87,7 +87,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "customqr.herokuapp.com",
-	BasePath:         "/",
+	BasePath:         "",
 	Schemes:          []string{"https"},
 	Title:            "qrcode generator API",
 	Description:      "This is the API docs for testing",
