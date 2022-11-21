@@ -35,7 +35,7 @@ func NewCloudinary() *Cloudinary {
 	}
 }
 
-func FileUploader(file interface{}) (string, error) {
+func FileUploader(file interface{}, fileName string) (string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
@@ -46,7 +46,7 @@ func FileUploader(file interface{}) (string, error) {
 	}
 
 	//uploader
-	uploaderP, err := cldinary.Upload.Upload(ctx, file, uploader.UploadParams{Folder: cld.Folder})
+	uploaderP, err := cldinary.Upload.Upload(ctx, file, uploader.UploadParams{Folder: cld.Folder, PublicID: fileName})
 	if err != nil {
 		return "", err
 	}

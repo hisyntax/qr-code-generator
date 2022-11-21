@@ -8,9 +8,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"net/url"
 	"os"
-	"strings"
+
+	urlReq "github.com/hisyntax/domain/url"
 
 	"github.com/hisyntax/qr-code-generator/uploader"
 )
@@ -31,44 +31,46 @@ func GenerateQRCode(payload QrCode) (string, error) {
 	requestUrl := fmt.Sprintf("https://api.qr-code-generator.com/v1/create?access-token=%s", api_key)
 	method := "POST"
 
-	//if the text passed contains a dot(.), it is assumed to be a link
-	if strings.Contains(payload.QRCodeText, ".") {
-		//validate the url
-		_, err := url.ParseRequestURI(payload.QRCodeText)
-		if err != nil {
-			return "", errors.New("invalid url")
-		}
+	//validate url
+	texttype, err := urlReq.ValidateURL(payload.QRCodeText)
+	if err != nil {
+		return "", err
 	}
 
 	//generate qrcode
 	resImg, _, err := NewRequest(method, requestUrl, payload)
 	if err != nil {
-		fmt.Printf("This is tthe server err: %v\n", err)
-		return "", err
+		fmt.Printf("This is the server err: %v\n", err)
+		return "", errors.New("error generating qr code")
 	}
 
 	var base64Encoding string
 	mimeType := http.DetectContentType(resImg)
 	fmt.Printf("This is the mimeType: %v\n", mimeType)
 
+	var fileFormat string
 	switch mimeType {
 	case "image/jpeg":
 		base64Encoding += "data:image/jpeg;base64,"
+		fileFormat = "jpeg"
 	case "image/png":
 		base64Encoding += "data:image/png;base64,"
+		fileFormat = "png"
 	case "text/plain":
 		base64Encoding += "data:text/plain;base64,"
+		fileFormat = "svg"
 	case "application/pdf":
 		base64Encoding += "data:application/pdf;base64,"
+		fileFormat = "pdf"
 	}
 
 	base64Encoding += toBase64(resImg)
-	// fmt.Println(base64Encoding)
+	fileName := fmt.Sprintf("%s_%s_%v", texttype, payload.QRCodeText, fileFormat) // type(url/text), data type(google/ https://google.com), extention(file format, - png, jpg)
 
-	imgUrl, err := uploader.FileUploader(base64Encoding)
+	imgUrl, err := uploader.FileUploader(base64Encoding, fileName)
 	if err != nil {
-		fmt.Printf("This is tthe cloudinary err: %v\n", err)
-		return "", err
+		fmt.Printf("This is the cloudinary err: %v\n", err)
+		return "", errors.New("qr code could not be uploaded")
 	}
 
 	return imgUrl, err

@@ -8,6 +8,7 @@ import (
 	"github.com/hisyntax/qr-code-generator/qrcode"
 
 	"github.com/gin-gonic/gin"
+	urlReq "github.com/hisyntax/domain/url"
 	"github.com/joho/godotenv"
 )
 
@@ -15,6 +16,8 @@ func init() {
 	if err := godotenv.Load(); err != nil {
 		fmt.Println("no .env found")
 	}
+
+	urlReq.Token = os.Getenv("TOKEN")
 }
 
 func main() {
